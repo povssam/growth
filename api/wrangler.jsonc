@@ -10,7 +10,8 @@
   "vars": {
     "GPU_USD_PER_SEC": "0.000208",
     "MONTHLY_BUDGET_USD": "10",
-    "MAX_ATTEMPTS": "2"
+    "MAX_ATTEMPTS": "2",
+    "GPU_ENABLED": "false"
   },
   "observability": { "enabled": true }
 }

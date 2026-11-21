@@ -1,0 +1,95 @@
+name: deploy
+# Manual only: GitHub → Actions → deploy → Run workflow (works from the GitHub iPhone app / Safari).
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   token from the "Edit Cloudflare Workers" template + Account › Workers R2 Storage › Edit
+#   CLOUDFLARE_ACCOUNT_ID  c6ef66bc7613f7d4071eb9be54fa48a4 (personal account)
+#   GROWTH_PASSCODE        the passcode you will type into the app
+# Optional (only when connecting a GPU — enabling it is a separate, explicit step):
+#   RUNPOD_API_KEY
+on:
+  workflow_dispatch:
+    inputs:
+      enable_gpu:
+        description: "Enable GPU rendering (requires RUNPOD_API_KEY secret and RUNPOD_ENDPOINT_ID below)"
+        type: boolean
+        default: false
+      runpod_endpoint_id:
+        description: "RunPod endpoint ID (only used when enable_gpu is checked)"
+        type: string
+        default: ""
+permissions:
+  contents: read
+concurrency: deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: Check secrets are present
+        env:
+          PASS: ${{ secrets.GROWTH_PASSCODE }}
+        run: |
+          missing=0
+          for v in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID; do [ -n "${!v}" ] || { echo "::error::Missing secret $v"; missing=1; }; done
+          [ -n "$PASS" ] || { echo "::error::Missing secret GROWTH_PASSCODE"; missing=1; }
+          exit $missing
+
+      - name: Build PWA
+        working-directory: web
+        run: npm ci && npm run build
+
+      - name: Install Worker deps
+        working-directory: api
+        run: npm ci
+
+      - name: R2 bucket (create if missing; R2 must be enabled in the dashboard)
+        working-directory: api
+        run: |
+          if npx wrangler r2 bucket list | grep -q "growth-media"; then echo "bucket exists"; else npx wrangler r2 bucket create growth-media; fi
+
+      - name: Deploy Worker
+        id: deploy
+        working-directory: api
+        run: |
+          GPU=false; EXTRA=""
+          if [ "${{ inputs.enable_gpu }}" = "true" ]; then
+            [ -n "${{ inputs.runpod_endpoint_id }}" ] || { echo "::error::enable_gpu needs runpod_endpoint_id"; exit 1; }
+            GPU=true; EXTRA="--var RUNPOD_ENDPOINT_ID:${{ inputs.runpod_endpoint_id }}"
+          fi
+          npx wrangler deploy --var GPU_ENABLED:$GPU $EXTRA | tee deploy.log
+          URL=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
+          [ -n "$URL" ] || { echo "::error::could not find workers.dev URL in deploy output"; exit 1; }
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Worker secrets (values never printed)
+        working-directory: api
+        env:
+          PASS: ${{ secrets.GROWTH_PASSCODE }}
+          RUNPOD: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          printf '%s' "$PASS" | npx wrangler secret put ACCESS_TOKEN
+          # Signing key: generated once on the Worker, kept across deploys.
+          if ! npx wrangler secret list | grep -q '"SIGNING_KEY"'; then openssl rand -base64 48 | tr -d '\n' | npx wrangler secret put SIGNING_KEY; fi
+          if [ "${{ inputs.enable_gpu }}" = "true" ]; then printf '%s' "$RUNPOD" | npx wrangler secret put RUNPOD_API_KEY; fi
+
+      - name: Smoke test the live HTTPS app
+        working-directory: api
+        env:
+          PASS: ${{ secrets.GROWTH_PASSCODE }}
+        run: |
+          ffmpeg -v error -y -f lavfi -i testsrc2=size=1920x1080:rate=30 -t 6 -c:v libx264 -crf 12 -pix_fmt yuv420p smoke.mp4
+          sleep 5
+          node scripts/smoke.mjs "${{ steps.deploy.outputs.url }}" "$PASS" smoke.mp4
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Growth" >> "$GITHUB_STEP_SUMMARY"
+          echo "Live URL: ${{ steps.deploy.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "GPU rendering: ${{ inputs.enable_gpu && 'enabled' || 'disabled' }}" >> "$GITHUB_STEP_SUMMARY"

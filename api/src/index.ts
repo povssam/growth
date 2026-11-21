@@ -20,6 +20,7 @@ export interface Env {
   RUNPOD_API_KEY?: string; // secret
   RUNPOD_ENDPOINT_ID?: string;
   GPU_BACKEND_URL?: string; // override (local dev server that speaks the RunPod API)
+  GPU_ENABLED?: string; // must be "true" for any job to reach a GPU (kill switch; default off)
   PUBLIC_URL?: string; // externally reachable base URL for callbacks
   GPU_USD_PER_SEC: string; // e.g. "0.000208" (RunPod 24 GB flex tier, $0.75/h)
   MONTHLY_BUDGET_USD: string; // hard cap, e.g. "10"
@@ -96,6 +97,7 @@ async function spentThisMonth(env: Env): Promise<number> {
 
 // ---------- GPU provider (RunPod serverless API; local dev server speaks the same API) ----------
 function gpuBase(env: Env) {
+  if (env.GPU_ENABLED !== "true") return "";
   return env.GPU_BACKEND_URL || (env.RUNPOD_ENDPOINT_ID ? `https://api.runpod.ai/v2/${env.RUNPOD_ENDPOINT_ID}` : "");
 }
 async function gpuFetch(env: Env, path: string, body?: unknown) {
@@ -146,6 +148,7 @@ async function createJob(req: Request, env: Env) {
   const tool = b.tool || "restyle";
   const mode = b.mode === "full" ? "full" : "preview";
   if (!TOOLS[tool]) return err(400, "Unknown tool");
+  if (!gpuBase(env)) return err(503, "Rendering is turned off: no GPU is connected yet.");
   if (!b.input_key || !(await env.MEDIA.head(b.input_key))) return err(400, "Upload not found");
   const estimate = estimateGpuSeconds(mode, b.clip_seconds || 0) * Number(env.GPU_USD_PER_SEC);
   const budget = Number(env.MONTHLY_BUDGET_USD);
