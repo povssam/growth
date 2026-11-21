@@ -5,7 +5,7 @@ on:
   issue_comment:
     types: [created]
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
 concurrency:
@@ -23,7 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Claude implements issue and opens a PR
-        if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -35,6 +34,3 @@ jobs:
             and open a DRAFT pull request referencing the issue.
             Do not merge, deploy, enable GPU or change billing.
           claude_args: '--max-turns 25'
-      - name: Explain missing credentials
-        if: ${{ secrets.ANTHROPIC_API_KEY == '' }}
-        run: echo "::error::Set repository secret ANTHROPIC_API_KEY to activate Claude."
