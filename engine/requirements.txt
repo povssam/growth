@@ -1,0 +1,7 @@
+# torch comes from the CUDA base image
+transformers>=5.0,<6
+accelerate
+opencv-python-headless>=4.10
+numpy>=2
+requests
+runpod>=1.7

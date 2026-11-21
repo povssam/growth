@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "growth-studio",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "../web/out", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "growth-media" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "growth", "database_id": "REPLACE_AFTER_CREATE", "migrations_dir": "migrations" }],
+  "vars": {
+    "GPU_USD_PER_SEC": "0.000208",
+    "MONTHLY_BUDGET_USD": "10",
+    "MAX_ATTEMPTS": "2"
+  },
+  "observability": { "enabled": true }
+}

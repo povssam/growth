@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0c0c0d;
+  --color-panel: #151517;
+  --color-raised: #1d1d20;
+  --color-line: #2a2a2e;
+  --color-mute: #8a8780;
+  --color-soft: #bdb8ae;
+  --color-ivory: #f3efe7;
+  --color-champagne: #e8d6b4;
+  --color-danger: #ef8a7a;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html, body { background: var(--color-ink); color: var(--color-ivory); }
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+button, [role="button"] { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+
+.safe-top { padding-top: max(env(safe-area-inset-top), 16px); }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 16px); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 420ms var(--ease-out-soft) both; }
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(232, 214, 180, 0.16) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise, .shimmer { animation: none; }
+}
+
+input[type="range"].track {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent;
+}
+input[type="range"].track::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: var(--color-line); }
+input[type="range"].track::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 24px; height: 24px; margin-top: -10px; border-radius: 999px;
+  background: var(--color-ivory); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+input[type="range"].track::-moz-range-track { height: 4px; border-radius: 4px; background: var(--color-line); }
+input[type="range"].track::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: 999px; background: var(--color-ivory); }

@@ -1,0 +1,146 @@
+{
+  "luxury-interior": {
+    "label": "Luxury Interior",
+    "wall": {
+      "color": "#D9CBB4",
+      "finish": 0.6
+    },
+    "ceiling": {
+      "color": "#F1EEE8",
+      "finish": 0.5
+    },
+    "door": {
+      "color": "#3A2A20",
+      "finish": 0.5
+    },
+    "lighting": {
+      "temperature": 0.25,
+      "contrast": 0.15,
+      "practical_glow": 0.45,
+      "practical_kelvin": 2800,
+      "vignette": 0.25,
+      "saturation": -0.05
+    }
+  },
+  "minimal-architecture": {
+    "label": "Minimal Architecture",
+    "wall": {
+      "color": "#E6E4DF",
+      "finish": 0.75
+    },
+    "ceiling": {
+      "color": "#F4F4F2",
+      "finish": 0.6
+    },
+    "door": {
+      "color": "#34373A",
+      "finish": 0.6
+    },
+    "lighting": {
+      "temperature": -0.1,
+      "contrast": 0.12,
+      "practical_glow": 0.25,
+      "practical_kelvin": 3500,
+      "vignette": 0.15,
+      "saturation": -0.1
+    }
+  },
+  "clean-studio": {
+    "label": "Clean Studio",
+    "wall": {
+      "color": "#EEEDE9",
+      "finish": 0.8
+    },
+    "ceiling": {
+      "color": "#F6F6F4",
+      "finish": 0.7
+    },
+    "door": {
+      "color": "#E4E2DD",
+      "finish": 0.7
+    },
+    "lighting": {
+      "temperature": -0.05,
+      "contrast": 0.05,
+      "practical_glow": 0.2,
+      "practical_kelvin": 4000,
+      "saturation": -0.15
+    }
+  },
+  "cinematic-night": {
+    "label": "Cinematic Night",
+    "wall": {
+      "color": "#56606A",
+      "finish": 0.5
+    },
+    "ceiling": {
+      "color": "#2E3338",
+      "finish": 0.4
+    },
+    "door": {
+      "color": "#1C1F23",
+      "finish": 0.4
+    },
+    "lighting": {
+      "temperature": -0.15,
+      "exposure": -0.15,
+      "contrast": 0.25,
+      "shadow_tint": "#1D5566",
+      "practical_glow": 0.7,
+      "practical_kelvin": 2700,
+      "vignette": 0.35,
+      "black_lift": 0.4
+    }
+  },
+  "golden-hour": {
+    "label": "Golden Hour",
+    "wall": {
+      "color": "#D8C2A3",
+      "finish": 0.5
+    },
+    "ceiling": {
+      "color": "#EFE6D8",
+      "finish": 0.4
+    },
+    "door": {
+      "color": "#6A4A33",
+      "finish": 0.4
+    },
+    "lighting": {
+      "temperature": 0.6,
+      "contrast": 0.1,
+      "practical_glow": 0.6,
+      "practical_kelvin": 2300,
+      "vignette": 0.2,
+      "saturation": 0.08
+    }
+  },
+  "cyberpunk": {
+    "label": "Cyberpunk",
+    "wall": {
+      "color": "#2C2545",
+      "finish": 0.4
+    },
+    "ceiling": {
+      "color": "#16131F",
+      "finish": 0.3
+    },
+    "door": {
+      "color": "#0F0E14",
+      "finish": 0.3
+    },
+    "lighting": {
+      "temperature": -0.45,
+      "contrast": 0.3,
+      "saturation": 0.25,
+      "shadow_tint": "#00A6B8",
+      "practical_glow": 0.9,
+      "practical_kelvin": 9000,
+      "vignette": 0.4
+    }
+  },
+  "as-shot": {
+    "label": "As Shot",
+    "lighting": {}
+  }
+}

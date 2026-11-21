@@ -1,0 +1,4 @@
+ACCESS_TOKEN=dev-passcode
+SIGNING_KEY=change-me-to-random-32-chars
+GPU_BACKEND_URL=http://127.0.0.1:8789
+PUBLIC_URL=http://127.0.0.1:8787
