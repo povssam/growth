@@ -1,16 +1,18 @@
-# ChatGPT + Claude automation
+# ChatGPT + Claude Code on the web
 
-This is a staged draft PR. Workflows become active only after merge.
+This repository uses **Claude Code in the browser**, not the Anthropic API or the Claude Code GitHub Action.
 
-1. Configure the GitHub Actions repository secret `ANTHROPIC_API_KEY`. Never commit credentials.
-2. Create the GitHub label `agent:claude`.
-3. ChatGPT creates scoped issues with acceptance criteria via the GitHub connector.
-4. Labeling an issue `agent:claude` triggers Claude Code Action. Repository-owner comment `/claude implement` is another trigger.
-5. Claude attempts implementation on a branch and opens a draft PR.
-6. GitHub Actions validates web build, API typecheck and Docker engine build.
-7. ChatGPT reviews PRs through the connected GitHub plugin and provides Merge / Request changes / Reject recommendations. A separate supported event or scheduled automation is required to trigger this without asking.
-8. User approves merges. No automatic merge or GPU deployment.
+## Workflow
+1. ChatGPT writes a scoped GitHub Issue using the connected GitHub plugin.
+2. Open Claude Code on the web and start a task using the GitHub repository and Issue link, or use an official Claude GitHub task handoff if it is enabled on the account.
+3. Claude Code works in its own cloud environment and opens a draft pull request.
+4. GitHub Actions validates the PR with web build, API typecheck and Docker engine image build.
+5. ChatGPT reviews the PR via the connected GitHub plugin and gives a brief with Merge / Request changes / Reject options.
+6. User approves any merge. No automatic production deployment or paid GPU jobs.
 
-**Costs:** Claude API calls may be billed, and GitHub Actions minutes/storage may be used. No Grok/xAI key or integration is needed.
-
-**Limitations:** No automatic ChatGPT webhook integration or automatic repair loop is installed yet. Validate Claude Code Action compatibility and permissions before merging.
+## Important limits
+- No `ANTHROPIC_API_KEY`, `XAI_API_KEY`, or model API setup is needed for this repo.
+- A GitHub Issue label does **not** by itself launch Claude Code on the web. This requires an officially supported Claude web task trigger or an explicit user launch. Do not install an API-based workflow as a substitute.
+- GitHub Actions can run on PR events; automatic ChatGPT review requires a separately supported event/scheduled integration.
+- Claude web plan usage and GitHub Actions limits still apply.
+- No Grok integration, auto-merge or automatic repair loop is installed.
