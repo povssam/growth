@@ -99,7 +99,7 @@ iPhone Safari PWA (Next.js static export, Tailwind)
    │  passcode (Bearer), chunked uploads (25 MB parts)
    ▼
 Cloudflare Worker  ──── R2 (media: uploads, outputs, posters; zero egress)
-   │                 └── D1 (jobs, costs, budget)
+   │                 └── Durable Object, SQLite (jobs, costs, budget)
    │  POST /run + webhook, signed short-lived URLs (no storage creds on GPU)
    ▼
 RunPod Serverless GPU worker (Docker: torch + ffmpeg + baked model weights)

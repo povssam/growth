@@ -10,7 +10,7 @@ redraws the frame. See [docs/RESEARCH.md](docs/RESEARCH.md) for why and for the 
 
 ```
 web/     Next.js 15 + Tailwind 4 PWA (static export): Upload → Look → Customize → Preview → Full → Save
-api/     Cloudflare Worker: serves the PWA, R2 uploads/media, D1 jobs, cost estimates, budget, RunPod dispatch
+api/     Cloudflare Worker: serves the PWA, R2 uploads/media, Durable Object (SQLite) jobs, cost estimates, budget, RunPod dispatch
 engine/  Python GPU worker: segmentation (cached) → restyle → H.264/AAC; RunPod handler + Dockerfile
 docs/    RESEARCH.md (verified models/licenses/pricing), COSTS.md (costs, limits, roadmap), DEPLOY.md
 ```
@@ -30,8 +30,7 @@ Presets: `luxury-interior`, `minimal-architecture`, `clean-studio`, `cinematic-n
 
 ```bash
 cd engine && python dev_server.py --port 8789          # RunPod-compatible API running the real engine
-cd api && npx wrangler d1 migrations apply growth --local
-cp .dev.vars.example .dev.vars && npx wrangler dev       # http://127.0.0.1:8787
+cd api && cp .dev.vars.example .dev.vars && npx wrangler dev       # http://127.0.0.1:8787
 cd web && npm run build                                  # the Worker serves web/out
 ```
 

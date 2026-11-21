@@ -21,13 +21,14 @@ Create an endpoint from the image with these settings:
 | Execution timeout | 900 s | Hard stop for runaway jobs |
 | FlashBoot | on | Faster cold starts |
 
-## 3. Cloudflare (needs an API token and R2 enabled)
+## 3. Cloudflare (needs R2 enabled + deploy access)
+
+Job records live in a SQLite-backed **Durable Object** (`JobStore`) inside the Worker, so no D1
+database is needed. The personal account is already at its 10-database D1 limit.
 
 ```bash
 cd api
 npx wrangler r2 bucket create growth-media
-npx wrangler d1 create growth            # paste database_id into wrangler.jsonc
-npx wrangler d1 migrations apply growth --remote
 npx wrangler secret put ACCESS_TOKEN     # your app passcode
 npx wrangler secret put SIGNING_KEY      # random 32+ chars
 npx wrangler secret put RUNPOD_API_KEY

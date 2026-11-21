@@ -7,10 +7,14 @@
  *   Every job is cost-estimated first and refused if it would exceed the monthly budget.
  * - The GPU worker never gets storage credentials: it receives short-lived HMAC-signed URLs.
  */
+import { DbShim, JobStore } from "./store";
+export { JobStore };
+
 export interface Env {
   ASSETS: Fetcher;
   MEDIA: R2Bucket;
-  DB: D1Database;
+  JOBS: DurableObjectNamespace<JobStore>;
+  DB: DbShim; // populated per request from the JOBS Durable Object
   ACCESS_TOKEN: string; // owner passcode (secret)
   SIGNING_KEY: string; // HMAC key for media/callback URLs (secret)
   RUNPOD_API_KEY?: string; // secret
@@ -293,7 +297,10 @@ function contentTypeFor(key: string) {
 
 // ---------- router ----------
 export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
+  async fetch(req: Request, rawEnv: Env): Promise<Response> {
+    const env: Env = Object.assign(Object.create(rawEnv), {
+      DB: new DbShim(rawEnv.JOBS.get(rawEnv.JOBS.idFromName("main")) as any),
+    });
     const url = new URL(req.url);
     const p = url.pathname;
     if (!p.startsWith("/api/")) return env.ASSETS.fetch(req);
