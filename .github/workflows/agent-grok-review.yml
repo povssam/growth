@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Review PR using Grok (no code execution)
         env:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
