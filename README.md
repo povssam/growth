@@ -12,7 +12,8 @@ redraws the frame. See [docs/RESEARCH.md](docs/RESEARCH.md) for why and for the 
 web/     Next.js 15 + Tailwind 4 PWA (static export): Upload → Look → Customize → Preview → Full → Save
 api/     Cloudflare Worker: serves the PWA, R2 uploads/media, Durable Object (SQLite) jobs, cost estimates, budget, RunPod dispatch
 engine/  Python GPU worker: segmentation (cached) → restyle → H.264/AAC; RunPod handler + Dockerfile
-docs/    RESEARCH.md (verified models/licenses/pricing), COSTS.md (costs, limits, roadmap), DEPLOY.md
+docs/    RESEARCH.md (verified models/licenses/pricing), COSTS.md (costs, limits, roadmap), DEPLOY.md,
+         AGENT_AUTOMATION.md (rules + runbooks for AI agents working on this repo)
 ```
 
 ## Try the engine locally (CPU works, just slower)
